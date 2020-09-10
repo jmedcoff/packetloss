@@ -50,9 +50,15 @@ def get_ping_values_from_result(s):
 
 def get_current_ping():
     result = subprocess.run(ping_command, capture_output=True)
-    return get_ping_values_from_result(result.stdout.decode('UTF8'))
+    try:
+        return get_ping_values_from_result(result.stdout.decode('UTF8'))
+    except:
+        print("Bad values: " + result.stdout.decode('UTF8'))
+        return None
 
 def is_acceptable_ping(ping_values):
+    if not ping_values:
+        return True
     acceptable_time = ping_values.max_time <= max_acceptable_time
     acceptable_success_rate = (ping_values.packets_received/ping_values.packets_transmitted) >= min_acceptable_success_rate
     return acceptable_time and acceptable_success_rate
